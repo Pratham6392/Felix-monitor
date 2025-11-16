@@ -1,3 +1,0 @@
-# System-level dependencies for Streamlit Cloud
-# Currently none required, but this file ensures proper package installation
-
