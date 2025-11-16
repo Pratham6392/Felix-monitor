@@ -57,16 +57,32 @@ design discussed with the user:
 
 ## How to Run
 
-The monitor is intended to be run as a Python module. A Python 3.10+
-environment with `requests` (optional) and standard libraries is
-sufficient. To execute the CLI:
+### Web Dashboard (Recommended)
+
+Launch the modern web-based dashboard with interactive visualizations:
+
+```bash
+python run_dashboard.py
+```
+
+Or directly with streamlit:
+
+```bash
+streamlit run felix_monitor/app.py
+```
+
+The dashboard will open in your browser at `http://localhost:8501`.
+
+### CLI Version
+
+The monitor can also be run as a Python module for command-line usage:
 
 ```bash
 python -m felix_monitor.dashboard --symbols ETH HYPE --shock -0.2
 ```
 
 This will fetch stub data, compute liquidation scenarios and print
-impact metrics for a 20% price drop.
+impact metrics for a 20% price drop to the console.
 
 ## Extending the Monitor
 

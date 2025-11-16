@@ -1,6 +1,15 @@
 # Felix Monitor Dependencies
 # Python 3.10+ required
 
-# HTTP requests library (optional, for future API integration)
+# Core dependencies
 requests>=2.31.0
+web3>=6.0.0
+
+# UI dependencies
+streamlit>=1.28.0
+plotly>=5.17.0
+pandas>=2.0.0
+
+# Optional: for enhanced visualizations
+altair>=5.0.0
 
