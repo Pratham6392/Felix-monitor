@@ -167,10 +167,19 @@ def compute_liquidity_impact(
     # compute impact relative to orderbook depth
     for symbol, amount in collateral_to_sell.items():
         # Determine depth: use override if provided, else use first record's metrics.
-        depth = (
-            orderbook_depth_levels.get(symbol)
-            if orderbook_depth_levels and symbol in orderbook_depth_levels
-            else fused_data[0]["market_metrics"].get("best_bid_depth", 1.0)
-        )
+        depth = None
+        if orderbook_depth_levels and symbol in orderbook_depth_levels:
+            depth = orderbook_depth_levels.get(symbol)
+        else:
+            # Find a record with this symbol and get its market_metrics
+            for record in fused_data:
+                if record["collateral_type"].upper() == symbol:
+                    depth = record["market_metrics"].get("best_bid_depth")
+                    break
+        
+        # If depth is still None, use a default value
+        if depth is None:
+            depth = 1.0
+        
         impact[symbol] = amount / max(depth, 1e-8)
     return impact

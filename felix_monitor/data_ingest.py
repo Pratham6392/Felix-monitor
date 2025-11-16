@@ -65,6 +65,7 @@ class CdpPosition:
 def fetch_felix_positions(
     network: str = "hyperliquid",
     collateral_types: List[str] | None = None,
+    force_stub: bool = False,
     **kwargs,
 ) -> List[CdpPosition]:
     """
@@ -76,6 +77,8 @@ def fetch_felix_positions(
         The blockchain network to query (default "hyperliquid").
     collateral_types : list of str, optional
         Filter results by specific collateral tokens (e.g. ["ETH", "HYPE"]).
+    force_stub : bool, optional
+        If True, forces the function to return stubbed data even if web3 is available.
 
     Returns
     -------
@@ -92,7 +95,7 @@ def fetch_felix_positions(
     # Default RPC URL for Hyperliquid; can be overridden by rpc_url parameter.
     rpc_url: str | None = kwargs.pop("rpc_url", None)
     if rpc_url is None:
-        rpc_url = os.getenv("HYPERLIQUID_RPC_URL", "https://rpc.hyperliquid.xyz/evm")
+        rpc_url = os.getenv("HYPERLIQUID_RPC_URL", "https://ethereum.publicnode.com")
 
     # Optional mapping of collateral symbols to contract addresses and metadata.
     # Each entry should include:
@@ -107,9 +110,6 @@ def fetch_felix_positions(
     )
     if collateral_configs is None:
         collateral_configs = {
-            # These example addresses should be replaced with the actual
-            # addresses for each collateral type on HyperEVM. See Felix
-            # documentation for the latest values.
             "HYPE": {
                 "trove_manager": "0x0000000000000000000000000000000000000000",
                 "trove_nft": "0x0000000000000000000000000000000000000000",
@@ -134,33 +134,270 @@ def fetch_felix_positions(
         "max_troves_per_collateral", None
     )
 
-    # If web3 is not available, fall back to stubbed data.
-    if Web3 is None:
-        logger.info("web3 not available; returning stubbed Felix CDP data")
+    # If web3 is not available or force_stub, fall back to stubbed data.
+    if Web3 is None or force_stub:
+        logger.info("Returning stubbed Felix CDP data with expanded token set")
         dummy_data = [
+            # ETH Positions (multiple users, varied amounts)
             CdpPosition(
-                owner="0x123",
+                owner="0x1a2b3c4d5e6f7890abcdef1234567890abcdef12",
                 collateral_type="ETH",
-                collateral_amount=10.0,
-                debt=5000.0,
-                price=2000.0,
+                collateral_amount=15.5,
+                debt=28000.0,
+                price=3200.0,
                 min_collateral_ratio=1.5,
             ),
             CdpPosition(
-                owner="0xabc",
-                collateral_type="HYPE",
-                collateral_amount=500.0,
+                owner="0x2b3c4d5e6f7890abcdef1234567890abcdef1234",
+                collateral_type="ETH",
+                collateral_amount=8.2,
+                debt=12000.0,
+                price=3200.0,
+                min_collateral_ratio=1.5,
+            ),
+            CdpPosition(
+                owner="0x3c4d5e6f7890abcdef1234567890abcdef123456",
+                collateral_type="ETH",
+                collateral_amount=25.0,
+                debt=45000.0,
+                price=3200.0,
+                min_collateral_ratio=1.5,
+            ),
+            CdpPosition(
+                owner="0x4d5e6f7890abcdef1234567890abcdef12345678",
+                collateral_type="ETH",
+                collateral_amount=5.7,
+                debt=8500.0,
+                price=3200.0,
+                min_collateral_ratio=1.5,
+            ),
+            # BTC Positions
+            CdpPosition(
+                owner="0x5e6f7890abcdef1234567890abcdef1234567890",
+                collateral_type="BTC",
+                collateral_amount=2.5,
+                debt=95000.0,
+                price=65000.0,
+                min_collateral_ratio=1.5,
+            ),
+            CdpPosition(
+                owner="0x6f7890abcdef1234567890abcdef12345678901a",
+                collateral_type="BTC",
+                collateral_amount=1.2,
+                debt=42000.0,
+                price=65000.0,
+                min_collateral_ratio=1.5,
+            ),
+            CdpPosition(
+                owner="0x7890abcdef1234567890abcdef12345678901a2b",
+                collateral_type="BTC",
+                collateral_amount=0.8,
                 debt=25000.0,
-                price=50.0,
-                min_collateral_ratio=1.2,
+                price=65000.0,
+                min_collateral_ratio=1.5,
+            ),
+            # SOL Positions
+            CdpPosition(
+                owner="0x890abcdef1234567890abcdef12345678901a2b3c",
+                collateral_type="SOL",
+                collateral_amount=450.0,
+                debt=35000.0,
+                price=145.0,
+                min_collateral_ratio=1.6,
+            ),
+            CdpPosition(
+                owner="0x90abcdef1234567890abcdef12345678901a2b3c4d",
+                collateral_type="SOL",
+                collateral_amount=680.0,
+                debt=52000.0,
+                price=145.0,
+                min_collateral_ratio=1.6,
+            ),
+            CdpPosition(
+                owner="0x0abcdef1234567890abcdef12345678901a2b3c4d5e",
+                collateral_type="SOL",
+                collateral_amount=200.0,
+                debt=14500.0,
+                price=145.0,
+                min_collateral_ratio=1.6,
+            ),
+            # HYPE Positions
+            CdpPosition(
+                owner="0xabcdef1234567890abcdef12345678901a2b3c4d5e6f",
+                collateral_type="HYPE",
+                collateral_amount=1200.0,
+                debt=32000.0,
+                price=28.0,
+                min_collateral_ratio=1.3,
+            ),
+            CdpPosition(
+                owner="0xbcdef1234567890abcdef12345678901a2b3c4d5e6f78",
+                collateral_type="HYPE",
+                collateral_amount=850.0,
+                debt=18000.0,
+                price=28.0,
+                min_collateral_ratio=1.3,
+            ),
+            CdpPosition(
+                owner="0xcdef1234567890abcdef12345678901a2b3c4d5e6f7890",
+                collateral_type="HYPE",
+                collateral_amount=3500.0,
+                debt=72000.0,
+                price=28.0,
+                min_collateral_ratio=1.3,
+            ),
+            # AVAX Positions
+            CdpPosition(
+                owner="0xdef1234567890abcdef12345678901a2b3c4d5e6f7890ab",
+                collateral_type="AVAX",
+                collateral_amount=320.0,
+                debt=9800.0,
+                price=38.0,
+                min_collateral_ratio=1.5,
+            ),
+            CdpPosition(
+                owner="0xef1234567890abcdef12345678901a2b3c4d5e6f7890abcd",
+                collateral_type="AVAX",
+                collateral_amount=580.0,
+                debt=17500.0,
+                price=38.0,
+                min_collateral_ratio=1.5,
+            ),
+            # ARB Positions
+            CdpPosition(
+                owner="0xf1234567890abcdef12345678901a2b3c4d5e6f7890abcdef",
+                collateral_type="ARB",
+                collateral_amount=8500.0,
+                debt=12000.0,
+                price=0.82,
+                min_collateral_ratio=1.7,
+            ),
+            CdpPosition(
+                owner="0x1234567890abcdef12345678901a2b3c4d5e6f7890abcdef12",
+                collateral_type="ARB",
+                collateral_amount=15000.0,
+                debt=18500.0,
+                price=0.82,
+                min_collateral_ratio=1.7,
+            ),
+            # OP Positions
+            CdpPosition(
+                owner="0x234567890abcdef12345678901a2b3c4d5e6f7890abcdef123",
+                collateral_type="OP",
+                collateral_amount=4200.0,
+                debt=6500.0,
+                price=1.95,
+                min_collateral_ratio=1.6,
+            ),
+            CdpPosition(
+                owner="0x34567890abcdef12345678901a2b3c4d5e6f7890abcdef1234",
+                collateral_type="OP",
+                collateral_amount=7800.0,
+                debt=12000.0,
+                price=1.95,
+                min_collateral_ratio=1.6,
+            ),
+            # LINK Positions
+            CdpPosition(
+                owner="0x4567890abcdef12345678901a2b3c4d5e6f7890abcdef12345",
+                collateral_type="LINK",
+                collateral_amount=2500.0,
+                debt=32000.0,
+                price=14.5,
+                min_collateral_ratio=1.5,
+            ),
+            CdpPosition(
+                owner="0x567890abcdef12345678901a2b3c4d5e6f7890abcdef123456",
+                collateral_type="LINK",
+                collateral_amount=1800.0,
+                debt=22000.0,
+                price=14.5,
+                min_collateral_ratio=1.5,
+            ),
+            # UNI Positions
+            CdpPosition(
+                owner="0x67890abcdef12345678901a2b3c4d5e6f7890abcdef1234567",
+                collateral_type="UNI",
+                collateral_amount=3200.0,
+                debt=18000.0,
+                price=7.2,
+                min_collateral_ratio=1.6,
+            ),
+            CdpPosition(
+                owner="0x7890abcdef12345678901a2b3c4d5e6f7890abcdef12345678",
+                collateral_type="UNI",
+                collateral_amount=5600.0,
+                debt=28000.0,
+                price=7.2,
+                min_collateral_ratio=1.6,
+            ),
+            # MATIC Positions
+            CdpPosition(
+                owner="0x890abcdef12345678901a2b3c4d5e6f7890abcdef123456789",
+                collateral_type="MATIC",
+                collateral_amount=18500.0,
+                debt=11500.0,
+                price=0.68,
+                min_collateral_ratio=1.7,
+            ),
+            # ATOM Positions
+            CdpPosition(
+                owner="0x90abcdef12345678901a2b3c4d5e6f7890abcdef1234567890a",
+                collateral_type="ATOM",
+                collateral_amount=2100.0,
+                debt=14000.0,
+                price=8.5,
+                min_collateral_ratio=1.6,
+            ),
+            # NEAR Positions
+            CdpPosition(
+                owner="0x0abcdef12345678901a2b3c4d5e6f7890abcdef1234567890ab",
+                collateral_type="NEAR",
+                collateral_amount=8200.0,
+                debt=24500.0,
+                price=3.8,
+                min_collateral_ratio=1.6,
+            ),
+            # SUI Positions (newer chain)
+            CdpPosition(
+                owner="0xabcdef12345678901a2b3c4d5e6f7890abcdef1234567890abc",
+                collateral_type="SUI",
+                collateral_amount=12000.0,
+                debt=28000.0,
+                price=2.45,
+                min_collateral_ratio=1.7,
+            ),
+            # APT Positions (newer chain)
+            CdpPosition(
+                owner="0xbcdef12345678901a2b3c4d5e6f7890abcdef1234567890abcd",
+                collateral_type="APT",
+                collateral_amount=3800.0,
+                debt=26000.0,
+                price=7.8,
+                min_collateral_ratio=1.6,
+            ),
+            # INJ Positions (trending DeFi)
+            CdpPosition(
+                owner="0xcdef12345678901a2b3c4d5e6f7890abcdef1234567890abcde",
+                collateral_type="INJ",
+                collateral_amount=1500.0,
+                debt=32000.0,
+                price=24.5,
+                min_collateral_ratio=1.5,
+            ),
+            # TIA Positions (Celestia - newer)
+            CdpPosition(
+                owner="0xdef12345678901a2b3c4d5e6f7890abcdef1234567890abcdef",
+                collateral_type="TIA",
+                collateral_amount=4200.0,
+                debt=18500.0,
+                price=5.2,
+                min_collateral_ratio=1.7,
             ),
         ]
-        if collateral_types:
-            dummy_data = [p for p in dummy_data if p.collateral_type in collateral_types]
         return dummy_data
 
-    # Minimal ABIs for the contracts we interact with. These ABIs cover
-    # only the functions used in this module.
+    # Minimal ABIs
     TROVE_MANAGER_ABI = [
         {
             "inputs": [
@@ -268,7 +505,7 @@ def fetch_felix_positions(
     w3 = Web3(Web3.HTTPProvider(rpc_url))
     positions: List[CdpPosition] = []
 
-    # Determine which collateral types to fetch
+    # Determine collaterals
     collaterals_to_fetch = (
         collateral_types if collateral_types else list(collateral_configs.keys())
     )
@@ -276,49 +513,39 @@ def fetch_felix_positions(
     for symbol in collaterals_to_fetch:
         cfg = collateral_configs.get(symbol)
         if not cfg:
-            logger.warning("No configuration found for collateral '%s'; skipping", symbol)
+            logger.warning("No configuration for '%s'; skipping", symbol)
             continue
         try:
             tm_addr = w3.to_checksum_address(cfg["trove_manager"])
             nft_addr = w3.to_checksum_address(cfg["trove_nft"])
             pf_addr = w3.to_checksum_address(cfg["price_feed"])
-        except Exception as addr_err:  # pragma: no cover - address formatting
-            logger.warning("Invalid address in configuration for %s: %s", symbol, addr_err)
+        except Exception as addr_err:
+            logger.warning("Invalid address for %s: %s", symbol, addr_err)
             continue
 
-        # Instantiate contract objects
+        # Instantiate contracts
         trove_nft = w3.eth.contract(address=nft_addr, abi=TROVE_NFT_ABI)
         trove_manager = w3.eth.contract(address=tm_addr, abi=TROVE_MANAGER_ABI)
         price_feed = w3.eth.contract(address=pf_addr, abi=PRICE_FEED_ABI)
 
-        # Fetch total number of troves (ERC721 totalSupply)
+        # Fetch total number of troves
         try:
             total_troves = trove_nft.functions.totalSupply().call()
         except Exception as ex:
-            logger.warning(
-                "Failed to fetch totalSupply for %s troves: %s; using max_troves_per_collateral if provided",
-                symbol,
-                ex,
-            )
+            logger.warning("Failed to fetch totalSupply for %s: %s", symbol, ex)
             total_troves = 0
 
-        # Determine how many troves to fetch
+        # Determine how many to fetch
         num_to_fetch = total_troves
         if max_troves_per_collateral is not None and total_troves > max_troves_per_collateral:
             num_to_fetch = max_troves_per_collateral
 
-        # Retrieve price once per collateral
+        # Fetch price once
         try:
             round_data = price_feed.functions.latestRoundData().call()
             price_decimals = price_feed.functions.decimals().call()
             answer = round_data[1]
-            if answer < 0:
-                logger.warning(
-                    "Negative price reported by price feed for %s; skipping price", symbol
-                )
-                price = 0.0
-            else:
-                price = float(answer) / (10 ** price_decimals)
+            price = float(answer) / (10 ** price_decimals) if answer > 0 else 0.0
         except Exception as price_ex:
             logger.warning("Failed to fetch price for %s: %s", symbol, price_ex)
             price = 0.0
@@ -331,7 +558,6 @@ def fetch_felix_positions(
                 trove_data = trove_manager.functions.getLatestTroveData(trove_id).call()
                 entire_coll = trove_data[0]
                 entire_debt = trove_data[1]
-                # Convert raw values to human‑readable amounts
                 coll_decimals = cfg.get("decimals", 18)
                 debt_decimals = cfg.get("debt_decimals", 18)
                 collateral_amount = float(entire_coll) / (10 ** coll_decimals)
@@ -348,13 +574,7 @@ def fetch_felix_positions(
                     )
                 )
             except Exception as trove_err:
-                logger.warning(
-                    "Error retrieving trove %s index %s for %s: %s",
-                    trove_id if 'trove_id' in locals() else 'unknown',
-                    index,
-                    symbol,
-                    trove_err,
-                )
+                logger.warning("Error retrieving trove index %s for %s: %s", index, symbol, trove_err)
                 continue
 
     return positions

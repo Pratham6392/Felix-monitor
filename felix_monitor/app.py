@@ -10,9 +10,10 @@ import plotly.express as px
 import pandas as pd
 from typing import Dict, List, Any
 
-from .data_ingest import fetch_felix_positions, fetch_hyperliquid_market
-from .data_fusion import fuse_data
-from .risk_engine import (
+# Use absolute imports for Streamlit compatibility
+from felix_monitor.data_ingest import fetch_felix_positions, fetch_hyperliquid_market
+from felix_monitor.data_fusion import fuse_data
+from felix_monitor.risk_engine import (
     compute_liquidation_stats,
     compute_liquidity_impact,
     compute_perp_cdp_correlation,
@@ -364,11 +365,16 @@ def main():
     st.sidebar.markdown("---")
 
     # Symbol selection
-    available_symbols = ["ETH", "HYPE", "BTC", "SOL"]
+    available_symbols = [
+        "ETH", "BTC", "SOL", "HYPE",  # Major tokens
+        "AVAX", "ARB", "OP", "LINK",  # L1s and L2s
+        "UNI", "MATIC", "ATOM", "NEAR",  # DeFi & Ecosystems
+        "SUI", "APT", "INJ", "TIA"  # Newer chains
+    ]
     selected_symbols = st.sidebar.multiselect(
         "Select Collateral Assets",
         available_symbols,
-        default=["ETH", "HYPE"],
+        default=["ETH", "BTC", "SOL", "HYPE"],
         help="Choose which collateral types to monitor",
     )
 
@@ -420,13 +426,11 @@ def main():
     with st.spinner("🔍 Fetching data..."):
         try:
             # Fetch positions
-            if use_stub_data:
-                positions = fetch_felix_positions(collateral_types=selected_symbols)
-            else:
-                positions = fetch_felix_positions(
-                    collateral_types=selected_symbols,
-                    max_troves_per_collateral=max_troves,
-                )
+            positions = fetch_felix_positions(
+                collateral_types=selected_symbols,
+                max_troves_per_collateral=max_troves,
+                force_stub=use_stub_data,
+            )
 
             # Fetch market data
             market_data = fetch_hyperliquid_market(selected_symbols)
