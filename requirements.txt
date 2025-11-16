@@ -1,0 +1,6 @@
+# Felix Monitor Dependencies
+# Python 3.10+ required
+
+# HTTP requests library (optional, for future API integration)
+requests>=2.31.0
+
